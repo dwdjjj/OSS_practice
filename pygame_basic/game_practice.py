@@ -99,7 +99,7 @@ while running:
   # 충돌 처리
   if rabbit_rect.colliderect(enemy_rect):
     print("충돌!")
-    runnint = False
+    running = False
   
   screen.fill((255, 255, 255)) #흰 배경
   #screen.blit(background, (0, 0))

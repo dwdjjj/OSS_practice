@@ -14,6 +14,11 @@ pygame.display.set_caption(title)
 #게임 내 설정 clock => fps
 clock = pygame.time.Clock()
 
+#시간 정보
+total_time = 10
+start_ticks = pygame.time.get_ticks()
+game_font = pygame.font.Font(None, 40)
+
 bg = pygame.image.load('pygame_basic/bg.png')
 
 dog = pygame.image.load('avoid_game/dog.jpg')
@@ -53,6 +58,8 @@ while running:
     if event.type == pygame.KEYUP:
       if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
         to_x = 0
+    
+    
   # 3. 게임 캐릭터 위치 정의
   dog_x_pos += to_x
   
@@ -78,8 +85,16 @@ while running:
   if dog_rect.colliderect(ddong_rect):
     print("부딪혔습니다!")
     running = False
+    # 경과 시간 계산
+  elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+
+    # 타이머
+  timer = game_font.render("timer: " + str(int(total_time - elapsed_time)), True, (0,0,0))
+
+    #경과 시간 표시
+  screen.blit(timer, (10, 10))
   # 5. 화면에 그리기
-  #screen.blit(bg, (0, 0))
+  # screen.blit(bg, (0, 0))
   screen.fill((255,255,255))
   screen.blit(dog, (dog_x_pos, dog_y_pos))
   screen.blit(ddong, (ddong_x_pos, ddong_y_pos))
