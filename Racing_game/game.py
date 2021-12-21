@@ -24,7 +24,7 @@ def waitForPlayerToPressKey():
             if event.type == QUIT:
                 terminate()
             if event.type == KEYDOWN:
-                if event.key == K_ESCAPE: #escape quits
+                if event.key == K_ESCAPE:
                     terminate()
                 return
 
@@ -35,40 +35,41 @@ def playerHasHitBaddie(playerRect, baddies):
     return False
 
 def drawText(text, font, surface, x, y):
-    textobj = font.render(text, 1, TEXTCOLOR)
+    textobj = font.render(text, True, TEXTCOLOR)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# set up pygame, the window, and the mouse cursor
+# 셋팅
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-pygame.display.set_caption('car race')
+pygame.display.set_caption('Racing game!!')
 pygame.mouse.set_visible(False)
 
-# fonts
-font = pygame.font.SysFont(None, 30)
+# 폰트설정
+print(pygame.font.get_fonts())
+font = pygame.font.SysFont(None, 30, True, True)
 
-# sounds
+# 사운드세팅
 gameOverSound = pygame.mixer.Sound('Racing_game/music/crash.wav')
 pygame.mixer.music.load('Racing_game/music/car.wav')
 laugh = pygame.mixer.Sound('Racing_game/music/laugh.wav')
 
 
-# images
+# 이미지 로드
 playerImage = pygame.image.load('Racing_game/image/car1.png')
 car3 = pygame.image.load('Racing_game/image/car3.png')
 car4 = pygame.image.load('Racing_game/image/car4.png')
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('Racing_game/image/car2.png')
 sample = [car3,car4,baddieImage]
-wallLeft = pygame.image.load('image/left.png')
-wallRight = pygame.image.load('image/right.png')
+wallLeft = pygame.image.load('Racing_game/image/left.png')
+wallRight = pygame.image.load('Racing_game/image/right.png')
 
 
-# "Start" screen
-drawText('Press any key to start the game.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3))
+# 시작화면
+drawText('Please press Any key for Start game.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3))
 drawText('And Enjoy', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3)+30)
 pygame.display.update()
 waitForPlayerToPressKey()
@@ -81,7 +82,7 @@ v=open("Racing_game/data/save.dat",'r')
 topScore = int(v.readline())
 v.close()
 while (count>0):
-    # start of the game
+    
     baddies = []
     score = 0
     playerRect.topleft = (WINDOWWIDTH / 2, WINDOWHEIGHT - 50)
@@ -90,8 +91,9 @@ while (count>0):
     baddieAddCounter = 0
     pygame.mixer.music.play(-1, 0.0)
 
-    while True: # the game loop
-        score += 1 # increase score
+    # 메인 게임루프
+    while True:
+        score += 1
 
         for event in pygame.event.get():
             
@@ -138,7 +140,7 @@ while (count>0):
 
             
 
-        # Add new baddies at the top of the screen
+        # 위에서부터 나올 장애물 차량들
         if not reverseCheat and not slowCheat:
             baddieAddCounter += 1
         if baddieAddCounter == ADDNEWBADDIERATE:
@@ -162,7 +164,7 @@ while (count>0):
             
             
 
-        # Move the player around.
+        # 캐릭터 무빙
         if moveLeft and playerRect.left > 0:
             playerRect.move_ip(-1 * PLAYERMOVERATE, 0)
         if moveRight and playerRect.right < WINDOWWIDTH:
@@ -185,10 +187,10 @@ while (count>0):
             if b['rect'].top > WINDOWHEIGHT:
                 baddies.remove(b)
 
-        # Draw the game world on the window.
+        # 화면채우기
         windowSurface.fill(BACKGROUNDCOLOR)
 
-        # Draw the score and top score.
+        # 점수판그리기
         drawText('Score: %s' % (score), font, windowSurface, 128, 0)
         drawText('Top Score: %s' % (topScore), font, windowSurface,128, 20)
         drawText('Rest Life: %s' % (count), font, windowSurface,128, 40)
@@ -201,7 +203,7 @@ while (count>0):
 
         pygame.display.update()
 
-        # Check if any of the car have hit the player.
+        # 충돌시
         if playerHasHitBaddie(playerRect, baddies):
             if score > topScore:
                 g=open("Racing_game/data/save.dat",'w')
@@ -220,7 +222,7 @@ while (count>0):
     if (count==0):
      laugh.play()
      drawText('Game over', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
-     drawText('Press any key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 30)
+     drawText('아무키나 눌러 다시 시작하세요.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 30)
      pygame.display.update()
      time.sleep(2)
      waitForPlayerToPressKey()
