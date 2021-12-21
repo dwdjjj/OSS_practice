@@ -5,13 +5,13 @@ WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
 TEXTCOLOR = (255, 255, 255)
 BACKGROUNDCOLOR = (0, 0, 0)
-FPS = 40
-BADDIEMINSIZE = 10
-BADDIEMAXSIZE = 40
-BADDIEMINSPEED = 8
-BADDIEMAXSPEED = 8
-ADDNEWBADDIERATE = 6
-PLAYERMOVERATE = 5
+FPS = 50
+ENEMYMINSIZE = 10
+ENEMYMAXSIZE = 40
+ENEMYMINSPEED = 7
+ENEMYMAXSPEED = 7
+ADDNEWENEMYRATE = 6
+PLAYERMOVERATE = 4
 count=3
 
 def terminate():
@@ -28,8 +28,8 @@ def waitForPlayerToPressKey():
                     terminate()
                 return
 
-def playerHasHitBaddie(playerRect, baddies):
-    for b in baddies:
+def playerHasHitEnemy(playerRect, Enemys):
+    for b in Enemys:
         if playerRect.colliderect(b['rect']):
             return True
     return False
@@ -58,12 +58,13 @@ laugh = pygame.mixer.Sound('Racing_game/music/laugh.wav')
 
 
 # 이미지 로드
-playerImage = pygame.image.load('Racing_game/image/car1.png')
-car3 = pygame.image.load('Racing_game/image/car3.png')
-car4 = pygame.image.load('Racing_game/image/car4.png')
+playerImage = pygame.image.load('Racing_game/image/playercar.png')
+
+EnemyCar1 = pygame.image.load('Racing_game/image/EnemyCar1.png')
+EnemyCar2 = pygame.image.load('Racing_game/image/EnemyCar2.png')
+EnemyCar3 = pygame.image.load('Racing_game/image/EnemyCar3.png')
 playerRect = playerImage.get_rect()
-baddieImage = pygame.image.load('Racing_game/image/car2.png')
-sample = [car3,car4,baddieImage]
+sample = [EnemyCar1, EnemyCar2, EnemyCar3]
 wallLeft = pygame.image.load('Racing_game/image/left.png')
 wallRight = pygame.image.load('Racing_game/image/right.png')
 
@@ -83,12 +84,12 @@ topScore = int(v.readline())
 v.close()
 while (count>0):
     
-    baddies = []
+    Enemys = []
     score = 0
-    playerRect.topleft = (WINDOWWIDTH / 2, WINDOWHEIGHT - 50)
+    playerRect.topleft = ((WINDOWWIDTH / 2) - 100, WINDOWHEIGHT - 50)
     moveLeft = moveRight = moveUp = moveDown = False
-    reverseCheat = slowCheat = False
-    baddieAddCounter = 0
+    con = False
+    EnemyAddCounter = 0
     pygame.mixer.music.play(-1, 0.0)
 
     # 메인 게임루프
@@ -101,10 +102,7 @@ while (count>0):
                 terminate()
 
             if event.type == KEYDOWN:
-                if event.key == ord('z'):
-                    reverseCheat = True
-                if event.key == ord('x'):
-                    slowCheat = True
+            
                 if event.key == K_LEFT or event.key == ord('a'):
                     moveRight = False
                     moveLeft = True
@@ -119,12 +117,6 @@ while (count>0):
                     moveDown = True
 
             if event.type == KEYUP:
-                if event.key == ord('z'):
-                    reverseCheat = False
-                    score = 0
-                if event.key == ord('x'):
-                    slowCheat = False
-                    score = 0
                 if event.key == K_ESCAPE:
                         terminate()
             
@@ -141,26 +133,26 @@ while (count>0):
             
 
         # 위에서부터 나올 장애물 차량들
-        if not reverseCheat and not slowCheat:
-            baddieAddCounter += 1
-        if baddieAddCounter == ADDNEWBADDIERATE:
-            baddieAddCounter = 0
-            baddieSize =30 
-            newBaddie = {'rect': pygame.Rect(random.randint(140, 485), 0 - baddieSize, 23, 47),
-                        'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
+        if not con:
+            EnemyAddCounter += 1
+        if EnemyAddCounter == ADDNEWENEMYRATE:
+            EnemyAddCounter = 0
+            EnemySize =30 
+            newEnemy = {'rect': pygame.Rect(random.randint(140, 485), 0 - EnemySize, 23, 47),
+                        'speed': random.randint(ENEMYMINSPEED, ENEMYMAXSPEED),
                         'surface':pygame.transform.scale(random.choice(sample), (23, 47)),
                         }
-            baddies.append(newBaddie)
+            Enemys.append(newEnemy)
             sideLeft= {'rect': pygame.Rect(0,0,126,600),
-                       'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
+                       'speed': random.randint(ENEMYMINSPEED, ENEMYMAXSPEED),
                        'surface':pygame.transform.scale(wallLeft, (126, 599)),
                        }
-            baddies.append(sideLeft)
+            Enemys.append(sideLeft)
             sideRight= {'rect': pygame.Rect(497,0,303,600),
-                       'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
+                       'speed': random.randint(ENEMYMINSPEED, ENEMYMAXSPEED),
                        'surface':pygame.transform.scale(wallRight, (303, 599)),
                        }
-            baddies.append(sideRight)
+            Enemys.append(sideRight)
             
             
 
@@ -174,18 +166,13 @@ while (count>0):
         if moveDown and playerRect.bottom < WINDOWHEIGHT:
             playerRect.move_ip(0, PLAYERMOVERATE)
         
-        for b in baddies:
-            if not reverseCheat and not slowCheat:
-                b['rect'].move_ip(0, b['speed'])
-            elif reverseCheat:
-                b['rect'].move_ip(0, -5)
-            elif slowCheat:
-                b['rect'].move_ip(0, 1)
+        for b in Enemys:
+            b['rect'].move_ip(0, b['speed'])
 
          
-        for b in baddies[:]:
+        for b in Enemys[:]:
             if b['rect'].top > WINDOWHEIGHT:
-                baddies.remove(b)
+                Enemys.remove(b)
 
         # 화면채우기
         windowSurface.fill(BACKGROUNDCOLOR)
@@ -198,13 +185,13 @@ while (count>0):
         windowSurface.blit(playerImage, playerRect)
 
         
-        for b in baddies:
+        for b in Enemys:
             windowSurface.blit(b['surface'], b['rect'])
 
         pygame.display.update()
 
         # 충돌시
-        if playerHasHitBaddie(playerRect, baddies):
+        if playerHasHitEnemy(playerRect, Enemys):
             if score > topScore:
                 g=open("Racing_game/data/save.dat",'w')
                 g.write(str(score))
@@ -222,7 +209,7 @@ while (count>0):
     if (count==0):
      laugh.play()
      drawText('Game over', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
-     drawText('아무키나 눌러 다시 시작하세요.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 30)
+     drawText('Please press any keys to restart.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 30)
      pygame.display.update()
      time.sleep(2)
      waitForPlayerToPressKey()

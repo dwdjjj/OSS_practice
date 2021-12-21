@@ -1,4 +1,3 @@
-To run this game you need.
-1.python
-2.pygame
-installed in your ( linux ) computer to run interminal type :-python game.py
+이 게임은 pygame을 활용한 레이싱게임으로 사용할 이미지들을 로드한 후 시작화면을 셋팅하여 매 초마다 점수를 올리고 장애물 차량이 위에서 아래로 내려오는 게임이다. 이를 플레이어에게 주어진 차량한대를 컨트롤하여 피하는 게임인데, 벽에 부딪히거나 위로부터 내려오는 차량에 부딪히면 부딪혔음을 알리고 라이프를 하나 깎는다.
+Racing관련 게임들의 소스코드를 참고하면서 만들었고, 이미지를 직접 가져다가 사용하였다. pygame을 사용하면서 open과 write를 이용하여 어떤 파일을 읽어오거나 기록할 내용을 쓸 수 있다는 정보를 얻게 됨.
+메인 루프를 돌면서 키입력을 받을 때 turtle라이브러리의 Screen의 onkey보다 좀더 매끄러운 느낌을 많이 받았음.
